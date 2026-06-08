@@ -12,44 +12,39 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root { --bg: #0d0e12; --bg2: #13141a; --bg3: #1a1c24; --card: #1e2029; --border: rgba(255,255,255,0.08); --border2: rgba(255,255,255,0.14); --text: #f0f0f5; --muted: #8a8b99; --accent: #7c6fe0; --accent2: #5de0c0; --accent3: #f0c060; --glow: rgba(124, 111, 224, 0.15); --red: #e06070; --radius: 14px; --radius-sm: 8px; }
-  body { background: var(--bg); color: var(--text); font-family: 'Outfit', sans-serif; font-size: 16px; line-height: 1.6; min-height: 100vh; overflow-x: hidden; }
-  body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(124,111,224,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(124,111,224,0.04) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
-  .wrapper { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 0 24px 80px; }
+  :root { --bg: #0d0e12; --bg2: #13141a; --bg3: #1a1c24; --card: #1e2029; --border: rgba(255,255,255,0.08); --border2: rgba(255,255,255,0.14); --text: #f0f0f5; --muted: #8a8b99; --accent: #7c6fe0; --accent2: #5de0c0; --red: #e06070; --radius: 14px; --radius-sm: 8px; }
+  body { background: var(--bg); color: var(--text); font-family: 'Outfit', sans-serif; }
+  .wrapper { max-width: 860px; margin: 0 auto; padding: 0 24px 80px; }
   header { padding: 48px 0 36px; display: flex; align-items: center; gap: 16px; }
-  .logo-mark { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, var(--accent), var(--accent2)); display: flex; align-items: center; justify-content: center; font-family: 'DM Serif Display', serif; font-size: 22px; color: white; flex-shrink: 0; }
-  .brand h1 { font-family: 'DM Serif Display', serif; font-size: 26px; font-weight: 400; letter-spacing: -0.3px; }
-  .brand p { font-size: 13px; color: var(--muted); font-weight: 300; }
+  .logo-mark { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, var(--accent), var(--accent2)); display: flex; align-items: center; justify-content: center; font-family: 'DM Serif Display', serif; font-size: 22px; color: white; }
+  .brand h1 { font-family: 'DM Serif Display', serif; font-size: 26px; }
   .auth-ui { margin-left: auto; display: flex; align-items: center; gap: 10px; }
-  .btn-auth { background: var(--accent); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-family: 'Outfit'; font-size: 13px; }
-  .topics { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
-  .topic-pill { background: var(--bg3); border: 1px solid var(--border); color: var(--muted); font-size: 12px; font-weight: 500; padding: 6px 14px; border-radius: 20px; cursor: pointer; transition: all 0.2s; }
-  .topic-pill:hover, .topic-pill.active { border-color: var(--accent); color: #c0b8f8; background: rgba(124,111,224,0.1); }
+  .btn-auth { background: var(--accent); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; }
   .input-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
-  textarea { width: 100%; background: transparent; border: none; outline: none; color: var(--text); font-family: 'Outfit', sans-serif; font-size: 15px; min-height: 100px; resize: none; }
-  .solve-btn { background: linear-gradient(135deg, var(--accent), #5a50cc); color: white; border: none; padding: 12px 32px; border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; gap: 10px; font-weight: 600; }
-  .result-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); display: none; padding: 20px; margin-top: 20px; }
+  textarea { width: 100%; background: transparent; border: none; outline: none; color: var(--text); font-family: 'Outfit'; font-size: 15px; min-height: 100px; resize: none; }
+  .solve-btn { background: var(--accent); color: white; border: none; padding: 12px 32px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+  .result-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; display: none; }
   .result-card.visible { display: block; }
   .history-section { margin-top: 36px; }
-  .history-item { background: var(--bg3); border: 1px solid var(--border); padding: 10px 14px; margin-bottom: 8px; border-radius: 8px; cursor: pointer; }
+  .history-item { background: var(--bg3); border: 1px solid var(--border); padding: 10px; margin-bottom: 8px; border-radius: 8px; cursor: pointer; }
 </style>
 </head>
 <body>
 <div class="wrapper">
   <header>
     <div class="logo-mark">∑</div>
-    <div class="brand"><h1>MathSolve</h1><p>Step-by-step solutions for any problem</p></div>
+    <div class="brand"><h1>MathSolve</h1></div>
     <div class="auth-ui">
       <button id="login-btn" class="btn-auth" onclick="signIn()">Sign In</button>
       <div id="user-profile" style="display:none; text-align:right;">
-        <span id="user-name" style="font-size:12px; color:var(--muted); display:block;"></span>
-        <button onclick="signOut()" style="background:none; border:none; color:var(--red); cursor:pointer; font-size:11px;">Logout</button>
+        <span id="user-name" style="font-size:12px; display:block;"></span>
+        <button onclick="signOut()" style="background:none; border:none; color:var(--red); cursor:pointer;">Logout</button>
       </div>
     </div>
   </header>
 
   <div class="input-card">
-    <textarea id="problem-input" placeholder="Type your math problem here..."></textarea>
+    <textarea id="problem-input" placeholder="Type your problem here..."></textarea>
     <button class="solve-btn" id="solve-btn" onclick="solve()">Solve Problem</button>
   </div>
 
@@ -61,6 +56,7 @@
 </div>
 
 <script>
+  // Firebase Config
   const firebaseConfig = {
     apiKey: "AIzaSyD5Zo7yh2leXygANPY7lcpTmnlUhCi4-5s",
     authDomain: "pw-math-track.firebaseapp.com",
@@ -73,6 +69,7 @@
   const auth = firebase.auth();
   const db = firebase.firestore();
 
+  // Auth Functions
   function signIn() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
   function signOut() { auth.signOut(); }
 
@@ -87,12 +84,34 @@
     }
   });
 
+  // Your original Solve logic
   async function solve() {
-    const problem = document.getElementById('problem-input').value;
-    const fullText = "Example Solution content generated by AI..."; 
-    document.getElementById('result-card').classList.add('visible');
-    document.getElementById('result-body').innerHTML = fullText;
+    const problem = document.getElementById('problem-input').value.trim();
+    if (!problem) return;
 
+    const btn = document.getElementById('solve-btn');
+    btn.disabled = true;
+    
+    // API Call
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': 'YOUR_API_KEY', 'anthropic-version': '2023-06-01' },
+        body: JSON.stringify({
+            model: 'claude-3-5-sonnet-20240620',
+            max_tokens: 2000,
+            messages: [{ role: 'user', content: problem }]
+        })
+    });
+    
+    const data = await resp.json();
+    const fullText = data.content[0].text;
+
+    // Display
+    document.getElementById('result-card').classList.add('visible');
+    document.getElementById('result-body').innerText = fullText;
+    btn.disabled = false;
+
+    // Save to Firestore
     if (auth.currentUser) {
         db.collection('users').doc(auth.currentUser.uid).collection('history').add({
             problem: problem,
@@ -104,10 +123,10 @@
 
   function loadFirestoreHistory() {
     db.collection('users').doc(auth.currentUser.uid).collection('history')
-      .orderBy('timestamp', 'desc').limit(8).onSnapshot(snap => {
+      .orderBy('timestamp', 'desc').limit(5).onSnapshot(snap => {
         const list = document.getElementById('history-list');
         document.getElementById('history-section').style.display = 'block';
-        list.innerHTML = snap.docs.map(doc => `<div class="history-item">${doc.data().problem}</div>`).join('');
+        list.innerHTML = snap.docs.map(doc => `<div class="history-item">${doc.data().problem.substring(0,30)}...</div>`).join('');
     });
   }
 </script>
