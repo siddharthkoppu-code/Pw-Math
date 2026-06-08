@@ -12,7 +12,6 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
 <style>
-  /* [KEEPING YOUR ORIGINAL CSS] */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root { --bg: #0d0e12; --bg2: #13141a; --bg3: #1a1c24; --card: #1e2029; --border: rgba(255,255,255,0.08); --border2: rgba(255,255,255,0.14); --text: #f0f0f5; --muted: #8a8b99; --accent: #7c6fe0; --accent2: #5de0c0; --accent3: #f0c060; --glow: rgba(124, 111, 224, 0.15); --red: #e06070; --radius: 14px; --radius-sm: 8px; }
   body { background: var(--bg); color: var(--text); font-family: 'Outfit', sans-serif; font-size: 16px; line-height: 1.6; min-height: 100vh; overflow-x: hidden; }
@@ -24,19 +23,24 @@
   .brand p { font-size: 13px; color: var(--muted); font-weight: 300; }
   .auth-ui { margin-left: auto; display: flex; align-items: center; gap: 10px; }
   .btn-auth { background: var(--accent); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-family: 'Outfit'; font-size: 13px; }
-  
-  /* [ALL OTHER ORIGINAL STYLES REMAIN HERE...] */
-  .topics, .input-card, .upload-row, .examples, .btn-row, .result-card, .history-section { /* Assume all your other styles are here */ }
+  /* (All other original styles...) */
+  .topics { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .topic-pill { background: var(--bg3); border: 1px solid var(--border); color: var(--muted); font-size: 12px; font-weight: 500; padding: 6px 14px; border-radius: 20px; cursor: pointer; transition: all 0.2s; }
+  .topic-pill.active { border-color: var(--accent); color: #c0b8f8; background: rgba(124,111,224,0.1); }
+  .input-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
+  textarea { width: 100%; background: transparent; border: none; outline: none; color: var(--text); font-family: 'Outfit', sans-serif; font-size: 15px; min-height: 100px; resize: none; }
+  .solve-btn { background: var(--accent); color: white; border: none; padding: 12px 32px; border-radius: 8px; cursor: pointer; font-family: 'Outfit'; font-weight: 600; }
+  .result-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; display: none; margin-top: 20px; }
+  .result-card.visible { display: block; }
+  .history-section { margin-top: 36px; display: none; }
+  .history-item { background: var(--bg3); border: 1px solid var(--border); padding: 10px; margin-bottom: 8px; border-radius: 8px; cursor: pointer; }
 </style>
 </head>
 <body>
 <div class="wrapper">
   <header>
     <div class="logo-mark">∑</div>
-    <div class="brand">
-      <h1>MathSolve</h1>
-      <p>Step-by-step solutions for any problem</p>
-    </div>
+    <div class="brand"><h1>MathSolve</h1><p>Step-by-step solutions for any problem</p></div>
     <div class="auth-ui">
       <button id="login-btn" class="btn-auth" onclick="signIn()">Sign In</button>
       <div id="user-profile" style="display:none; text-align:right;">
@@ -46,10 +50,19 @@
     </div>
   </header>
 
+  <div class="input-card">
+    <textarea id="problem-input" placeholder="Type your math problem here..."></textarea>
+    <button class="solve-btn" id="solve-btn" onclick="solve()">Solve Problem</button>
   </div>
 
+  <div class="result-card" id="result-card"><div id="result-body"></div></div>
+  <div class="history-section" id="history-section">
+    <div class="history-title">Recent Problems</div>
+    <div class="history-list" id="history-list"></div>
+  </div>
+</div>
+
 <script>
-  // 1. Firebase Config
   const firebaseConfig = {
     apiKey: "AIzaSyD5Zo7yh2leXygANPY7lcpTmnlUhCi4-5s",
     authDomain: "pw-math-track.firebaseapp.com",
@@ -62,7 +75,6 @@
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  // 2. Auth Handlers
   function signIn() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
   function signOut() { auth.signOut(); }
 
@@ -73,34 +85,35 @@
         document.getElementById('user-name').textContent = user.displayName;
         loadFirestoreHistory();
     } else {
-        history = []; renderHistory();
+        document.getElementById('history-section').style.display = 'none';
     }
   });
 
-  // 3. Updated Solve Function with Firestore save
   async function solve() {
-    // ... (Keep all your existing solve() logic) ...
+    const problem = document.getElementById('problem-input').value;
+    // ... [Your original logic goes here] ...
+    const fullText = "Example Solution..."; // Replace with your actual AI result
     
-    // AFTER getting fullText, add this:
+    document.getElementById('result-card').classList.add('visible');
+    document.getElementById('result-body').innerHTML = fullText;
+
     if (auth.currentUser) {
         db.collection('users').doc(auth.currentUser.uid).collection('history').add({
-            problem: problem || 'Image problem',
+            problem: problem,
             solution: fullText,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
     }
   }
 
-  // 4. Firestore History Loader
   function loadFirestoreHistory() {
     db.collection('users').doc(auth.currentUser.uid).collection('history')
       .orderBy('timestamp', 'desc').limit(8).onSnapshot(snap => {
-        history = snap.docs.map(doc => doc.data());
-        renderHistory();
-      });
+        const list = document.getElementById('history-list');
+        document.getElementById('history-section').style.display = 'block';
+        list.innerHTML = snap.docs.map(doc => `<div class="history-item">${doc.data().problem}</div>`).join('');
+    });
   }
-
-  // ... [PASTE YOUR OTHER ORIGINAL FUNCTIONS HERE: formatSolution, addHistory, renderHistory, etc.]
 </script>
 </body>
 </html>
