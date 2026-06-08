@@ -1,83 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MathSolve — Step-by-Step Problem Solver</title>
-    
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MathSolve — Step-by-Step Problem Solver</title>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
-    <style>
-        /* [PASTE YOUR ENTIRE ORIGINAL CSS HERE] */
-        /* Just make sure to add this small helper for the Auth button: */
-        .btn-auth { background: var(--accent); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-family: 'Outfit'; }
-    </style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+<style>
+  /* [KEEPING YOUR ORIGINAL CSS] */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --bg: #0d0e12; --bg2: #13141a; --bg3: #1a1c24; --card: #1e2029; --border: rgba(255,255,255,0.08); --border2: rgba(255,255,255,0.14); --text: #f0f0f5; --muted: #8a8b99; --accent: #7c6fe0; --accent2: #5de0c0; --accent3: #f0c060; --glow: rgba(124, 111, 224, 0.15); --red: #e06070; --radius: 14px; --radius-sm: 8px; }
+  body { background: var(--bg); color: var(--text); font-family: 'Outfit', sans-serif; font-size: 16px; line-height: 1.6; min-height: 100vh; overflow-x: hidden; }
+  body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(124,111,224,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(124,111,224,0.04) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
+  .wrapper { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 0 24px 80px; }
+  header { padding: 48px 0 36px; display: flex; align-items: center; gap: 16px; }
+  .logo-mark { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, var(--accent), var(--accent2)); display: flex; align-items: center; justify-content: center; font-family: 'DM Serif Display', serif; font-size: 22px; color: white; flex-shrink: 0; }
+  .brand h1 { font-family: 'DM Serif Display', serif; font-size: 26px; font-weight: 400; letter-spacing: -0.3px; }
+  .brand p { font-size: 13px; color: var(--muted); font-weight: 300; }
+  .auth-ui { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+  .btn-auth { background: var(--accent); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-family: 'Outfit'; font-size: 13px; }
+  
+  /* [ALL OTHER ORIGINAL STYLES REMAIN HERE...] */
+  .topics, .input-card, .upload-row, .examples, .btn-row, .result-card, .history-section { /* Assume all your other styles are here */ }
+</style>
 </head>
 <body>
-
 <div class="wrapper">
-    <header>
-        <div class="logo-mark">∑</div>
-        <div class="brand">
-            <h1>MathSolve</h1>
-            <p>Step-by-step solutions for any problem</p>
-        </div>
-        <div id="auth-area" style="margin-left: auto;">
-            <button id="login-btn" class="btn-auth" onclick="signIn()">Sign In</button>
-            <div id="user-profile" style="display:none; text-align:right;">
-                <div id="user-name" style="font-size:12px; color:var(--muted)"></div>
-                <button onclick="signOut()" style="background:transparent; border:none; color:var(--red); font-size:12px; cursor:pointer;">Logout</button>
-            </div>
-        </div>
-    </header>
-
+  <header>
+    <div class="logo-mark">∑</div>
+    <div class="brand">
+      <h1>MathSolve</h1>
+      <p>Step-by-step solutions for any problem</p>
     </div>
+    <div class="auth-ui">
+      <button id="login-btn" class="btn-auth" onclick="signIn()">Sign In</button>
+      <div id="user-profile" style="display:none; text-align:right;">
+        <span id="user-name" style="font-size:12px; color:var(--muted); display:block;"></span>
+        <button onclick="signOut()" style="background:none; border:none; color:var(--red); cursor:pointer; font-size:11px;">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  </div>
 
 <script>
-    // 1. Firebase Initialization
-    const firebaseConfig = {
-        apiKey: "AIzaSyD5Zo7yh2leXygANPY7lcpTmnlUhCi4-5s",
-        authDomain: "pw-math-track.firebaseapp.com",
-        projectId: "pw-math-track",
-        storageBucket: "pw-math-track.firebasestorage.app",
-        messagingSenderId: "137478965634",
-        appId: "1:137478965634:web:fcede46a01c087d373a79b"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+  // 1. Firebase Config
+  const firebaseConfig = {
+    apiKey: "AIzaSyD5Zo7yh2leXygANPY7lcpTmnlUhCi4-5s",
+    authDomain: "pw-math-track.firebaseapp.com",
+    projectId: "pw-math-track",
+    storageBucket: "pw-math-track.firebasestorage.app",
+    messagingSenderId: "137478965634",
+    appId: "1:137478965634:web:fcede46a01c087d373a79b"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
-    // 2. Auth Logic
-    function signIn() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
-    function signOut() { auth.signOut(); }
+  // 2. Auth Handlers
+  function signIn() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
+  function signOut() { auth.signOut(); }
 
-    auth.onAuthStateChanged((user) => {
-        document.getElementById('login-btn').style.display = user ? 'none' : 'block';
-        document.getElementById('user-profile').style.display = user ? 'block' : 'none';
-        if (user) document.getElementById('user-name').textContent = user.displayName;
-    });
+  auth.onAuthStateChanged((user) => {
+    document.getElementById('login-btn').style.display = user ? 'none' : 'block';
+    document.getElementById('user-profile').style.display = user ? 'block' : 'none';
+    if (user) {
+        document.getElementById('user-name').textContent = user.displayName;
+        loadFirestoreHistory();
+    } else {
+        history = []; renderHistory();
+    }
+  });
 
-    // 3. Updated solve function integration
-    // Inside your original solve() function, look for where the AI response finishes (after formatSolution(fullText)):
-    /*
-        ...
-        resultBody.innerHTML = formatSolution(fullText);
-        
-        // ADD THIS LINE TO YOUR EXISTING SOLVE FUNCTION:
-        if (auth.currentUser) {
-            db.collection('users').doc(auth.currentUser.uid).collection('history').add({
-                problem: document.getElementById('problem-input').value,
-                solution: fullText,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            });
-        }
-        ...
-    */
+  // 3. Updated Solve Function with Firestore save
+  async function solve() {
+    // ... (Keep all your existing solve() logic) ...
+    
+    // AFTER getting fullText, add this:
+    if (auth.currentUser) {
+        db.collection('users').doc(auth.currentUser.uid).collection('history').add({
+            problem: problem || 'Image problem',
+            solution: fullText,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+    }
+  }
+
+  // 4. Firestore History Loader
+  function loadFirestoreHistory() {
+    db.collection('users').doc(auth.currentUser.uid).collection('history')
+      .orderBy('timestamp', 'desc').limit(8).onSnapshot(snap => {
+        history = snap.docs.map(doc => doc.data());
+        renderHistory();
+      });
+  }
+
+  // ... [PASTE YOUR OTHER ORIGINAL FUNCTIONS HERE: formatSolution, addHistory, renderHistory, etc.]
 </script>
 </body>
 </html>
